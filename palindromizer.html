@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow' rel='stylesheet' type='text/css'>
+    <style type="text/css">
+    body {
+        background-color: #cccccc;
+        padding: 0 0 ;
+
+    }
+    #header {
+        width: 750px;
+        margin: 0 auto;
+    }
+    h1, h3 {
+        display: inline-block;
+    }
+    .mirrorChar {
+        display: inline-block; 
+        -moz-transform: matrix(-1, 0, 0, 1, 0, 0);
+        -webkit-transform: matrix(-1, 0, 0, 1, 0, 0);
+        -o-transform:matrix(-1, 0, 0, 1, 0, 0);
+    }
+    #pal-left {
+        text-align: right;
+        margin-right: -2px;
+    }
+    #pal-right {
+        text-align: left;
+        margin-left: -2px;
+    }
+    #palhqmid {
+        text-align: center;
+        width: 1em;
+    }
+    div.pal {
+        display: inline-block;
+        background-color: white;
+        font-size: 20pt;
+        font-family: PT Sans Narrow;
+        border: none;
+        resize: none;
+        width: 50%;
+        height: 50%;
+    }
+    #pal_complete {
+        text-align: center;
+    }
+    #outerbox  {
+        text-align: center;
+        width: 100%;
+        background-color: #CCCC99;
+        margin: 0 auto;
+        padding: 2em 2px;
+    }
+    span.p1 {
+        color: #669966;
+    }
+    span.p2 {
+        color: #0033FF;
+    }
+    span.p3 {
+        color: #99CC00;
+    }
+    span.p4 {
+        color: #CC9900;
+    }
+    span.p5 {
+        color: #00CC99;
+    }
+    span.non-palindrome {
+        color: red;
+    }
+    #controls {
+        margin: 1em;
+    }
+    #mirror {
+        margin-top: 1em;
+        display: inline-block;
+    }
+    .button {
+        border-top: 1px solid #ebebeb;
+        background: #616161;
+        background: -webkit-gradient(linear, left top, left bottom, from(#cccccc), to(#616161));
+        background: -webkit-linear-gradient(top, #cccccc, #616161);
+        background: -moz-linear-gradient(top, #cccccc, #616161);
+        background: -ms-linear-gradient(top, #cccccc, #616161);
+        background: -o-linear-gradient(top, #cccccc, #616161);
+        padding: 5px 10px;
+        -webkit-border-radius: 6px;
+        -moz-border-radius: 6px;
+        border-radius: 6px;
+        -webkit-box-shadow: rgba(0,0,0,1) 0 1px 0;
+        -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+        box-shadow: rgba(0,0,0,1) 0 1px 0;
+        text-shadow: rgba(0,0,0,.4) 0 1px 0;
+        color: #000000;
+        font-size: 14px;
+        font-family: Georgia, serif;
+        text-decoration: none;
+        vertical-align: middle;
+    }
+    .unselected:hover {
+        border-top-color: #7fa846;
+        background: #7fa846;
+        color: #616161;
+    }
+    .unselected:active {
+        border-top-color: #b5cf4f;
+        background: #b5cf4f;
+    }
+    .selected {
+        border-top-color: #b5cf4f;
+        background: #b5cf4f;
+    }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="nondomfunctions.js"></script>
+</head>
+<body>
+    <div id="header">
+        <h1>palind<span class="mirrorChar">r</span><span class="mirrorChar">o</span><span class="mirrorChar">m</span><span class="mirrorChar">i</span><span class="mirrorChar">z</span><span class="mirrorChar">e</span><span class="mirrorChar">r</span></h1>
+        <h3>a palindrome editor</h3>
+    </div>
+    <div id="outerbox">
+
+        <div class="pal" id="pal-left" contentEditable="true" offset="0"><span id="pair-1-front" class="palindrome p1" offset="0" side="front" pair="1" analog="pair-1-back"></span></span></div>
+        <div class="pal" id="pal-right" contentEditable="true" offset="0"><span id="pair-1-back" class="palindrome p1" offset="0" side="back" pair="1" analog="pair-1-front"></span></div><br />
+        <div id="controls">
+            <a alt="Write from center" class="dir button selected" id="out" href="">|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<=...|...=>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</a>
+            <a alt="Write toward center"  class="dir button unselected" id="in" href="">|...=>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<=...|</a>
+            <br />
+
+            <a class="button selected" id="mirror" href="">Mirror</a>
+        </div>
+        <h2>your palindrome:</h2>
+        <p id="pal_complete"></p>
+    </div>
+
+
+    
+
+ 
+<script type="text/javascript">
+var LETTERS = ["a","A","b","B","c","C","d","D","e","E","f","F","g","G","h","H","i","I","j","J","k","K","l","L","m","M","n","N","o","O","p","P","q","Q","r","R","s","S","t","T","u","U","v","V","w","W","x","X","y","Y","z","Z"]
+var goPal, 
+    newChar, 
+    action, 
+    delTrigger, 
+    bsTrigger, 
+    delLetter, 
+    bsLetter, 
+    cursor, 
+    lastFocused,
+    spaceAdd,
+    selection,
+    currentSpan,
+    range;
+var invert = true;
+var mirrorSwitch = true;
+var currentSpanIsPal = true;
+
+function move_cursor_by_spaces(spaces, direction) {
+    direction = (typeof direction === "undefined") ? "forward" : direction;
+    var i = 0;
+    while (i < spaces)
+    {
+        selection.modify("move", direction, "character");
+        i++;
+    }
+}
+
+$('#mirror').click(function(e) {
+    e.preventDefault();
+    $(lastFocused).focus();
+    mirrorSwitch = !mirrorSwitch;
+    $(this).toggleClass("unselected");
+    $(this).toggleClass("selected");
+});
+
+
+$('a.dir').click(function(e) {
+    e.preventDefault();
+    $(lastFocused).focus();
+    if ($(this).hasClass("selected")) {
+    } else if (this.id === "in") {
+        $("#pal-left").css("text-align", "left");
+        $("#pal-right").css("text-align", "right");
+        $(this).toggleClass("unselected");
+        $(this).toggleClass("selected");
+        $("#out").toggleClass("unselected");
+        $("#out").toggleClass("selected");
+    } else {
+        $("#pal-left").css("text-align", "right");
+        $("#pal-right").css("text-align", "left");
+        $(this).toggleClass("unselected");
+        $(this).toggleClass("selected");
+        $("#in").toggleClass("unselected");
+        $("#in").toggleClass("selected");
+    }
+});
+
+$('div.pal').keydown(function(e) {
+    captureSelection();
+    if (action === "space") {
+        spaceAdd++;
+    } else {
+        spaceAdd = 0;
+    }
+    goPal = true;
+    if (e.keyCode > 64 && e.keyCode <98) {
+        // alphabetic
+        action = "letter";
+    } else if (e.keyCode === 8) {
+        // backspace
+        set_triggers(this);
+        action = "bs";
+    } else if (e.keyCode === 46) {
+        // delete
+        set_triggers(this);
+        action = "del";
+    } else if (e.keyCode === 32) {
+        action = "space";
+    } else if ((e.keyCode > 47 && e.keyCode < 58) || e.keyCode === 188 || e.keyCode === 190 || e.keyCode === 191 || e.keyCode === 192 || e.keyCode === 220 || e.keyCode === 222) {
+        //length mover
+        action = "punct";
+    } else {
+        goPal = false;
+    }
+});
+
+$('div.pal').keypress(function(e) {
+    newChar = just_letters(String.fromCharCode(e.keyCode));
+});
+$('div.pal').bind("input", mirror);
+
+$('div.pal').mouseup(function() {captureSelection();});
+$('div.pal').click(function() {captureSelection();});
+
+$('div.pal').focus(function() {
+        lastFocused = this;
+});
+
+function set_triggers(element) {
+    // populate triggers for delete actions
+    var thisText = $(element).text();
+    delTrigger = LETTERS.indexOf(thisText.charAt(cursor)) !== -1;
+    delLetter = thisText.charAt(cursor);
+    bsTrigger = LETTERS.indexOf(thisText.charAt(cursor -1)) !== -1;
+    bsLetter = thisText.charAt(cursor-1) ;
+}
+
+function mirror() {
+    // The meat of the app.
+    // goPal is true if the 
+    var plus, toPal;
+
+    if (mirrorSwitch) {
+        
+        // Determine which side we're on, that will be the side being mirrored onto.
+        if (this.id === "pal-left") {
+            var that = $('#pal-right');
+            var flip = false;
+        } else {
+            var that = $('#pal-left');                
+            var flip = true;            
+        }
+
+
+        var thisPairText = $(currentSpan).text();
+        var thatPair = $("#"+ $(currentSpan).attr("analog"));
+        var mappedThatPairText = map_string_to_scrubbed_string($(thatPair).text(), just_letters($(thatPair).text()));
+        var numNonLetters = thisPairText.slice(0,offset).length - just_letters(thisPairText.slice(0,offset)).length;
+        var pairIndex = (action === "del") ? mappedThatPairText.length - offset + numNonLetters - 1 : mappedThatPairText.length - offset + numNonLetters;
+        var checkLetter = (action === "del") ? delLetter : bsLetter;
+
+
+        if ((action === "del" && delTrigger) || (action === "bs" && bsTrigger)) {
+            plus = (action === "del" && delTrigger) ? 0 : -1;
+            if (!currentSpanIsPal) {
+                toPal = [$(this).text(), $(that).text()];
+            } else if ($(that).text()) {
+                var delCell = mappedThatPairText[pairIndex];
+                var delIndex = delCell.toLowerCase().indexOf(checkLetter.toLowerCase())
+                mappedThatPairText[pairIndex] = delCell.slice(0, delIndex) + delCell.slice(delIndex + 1);
+                $(thatPair).text(map_to_string(mappedThatPairText))
+                toPal = false;            
+            }
+        } else if (action === "letter") {
+            if ($(that).text()) {
+                mappedThatPairText.splice(pairIndex, 0, newChar)
+                $(thatPair).text(map_to_string(mappedThatPairText))
+                toPal = (currentSpanIsPal) ? false : [$(this).text(), $(that).text()];
+                plus = 1;
+            } else {
+                toPal = [$(this).text(), newChar];
+                plus = 1; 
+            }
+        } 
+    } else {
+        toPal = [$('#pal-left').text(), $('#pal-right').text()]
+        var flip = false;
+        if (action === "letter" || action === "punct" || action === "space") {
+            plus = 1;
+        } else if (action === "del") {
+            plus = 0;
+        } else if (action === "bs") {
+            plus = -1;
+        } else {
+            toPal = false;
+        }
+    }
+    
+    if (toPal) {
+
+        if (flip) {toPal.reverse();}
+
+        var palArray = palindromize(toPal[0],toPal[1]);
+
+        $('#pal-left').html(palArray[0]);
+        $('#pal-right').html(palArray[1]);
+
+        selection.modify("move", "backward", "line");
+        move_cursor_by_spaces(cursor + plus);
+    }
+
+    $("#pal_complete").text($('#pal-left').text() + $('#pal-right').text() )
+}
+
+// Populates selection, cursor, range, currentSpan variables
+var captureSelection = function(e) {
+    var nextSpan, 
+        nextSpanIsPal, 
+        prevSpan, 
+        prevSpanIsPal, 
+        behind, 
+        ahead;
+    selection = window.getSelection();
+
+    range = selection.getRangeAt(0);
+    if (!range.collapsed) {
+        move_cursor_by_spaces(1);
+    }
+    var spanOffset = Number($(range.endContainer.parentElement).attr('offset'))
+    if (spanOffset >= 0) {
+        cursor = (range.startOffset + Number($(range.endContainer.parentElement).attr('offset')))
+    } else {
+        cursor = 0
+    }
+    offset = range.startOffset
+
+    currentSpan = undefined;
+
+    if ($('#pal-left').text() || $('#pal-right').text() ) {
+        spans = $(selection.anchorNode.parentElement.parentElement).children();
+        currentSpanIsPal = cursor_in_pal(cursor, spans, false)
+        currentSpanText = $(currentSpan).text()
+        jlCurrentSpanText = just_letters(currentSpanText)
+        mappedCurrentSpanText = map_string_to_scrubbed_string(currentSpanText, jlCurrentSpanText)
+        currentSpanIsPal = $(currentSpan).hasClass('palindrome');
+    }
+
+
+    return cursor
+};
+
+function cursor_in_pal(cursor, spans) {
+    var checkSpan, currentStart, currentEnd, currentSpanIsPal;
+    for (var i=0; i<spans.length; i++) {
+        checkSpan = spans[i];
+        currentStart = Number($(checkSpan).attr('offset'));
+        currentEnd = currentStart + $(spans[i]).text().length;
+        currentSpanIsPal = $(checkSpan).hasClass('palindrome');
+
+        if (cursor === 0 || (currentStart < cursor && cursor <= currentEnd)) {
+            break;
+        } 
+    }
+    currentSpan = checkSpan;
+    return currentSpanIsPal;
+}
+</script>
+</body>

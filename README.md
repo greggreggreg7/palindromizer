@@ -1,6 +1,6 @@
 What's a palindrome?
 
-For our purposes it's a phrase wherein the letters going from left to right are exactly the same as the letters going from right to left. For instance, famously, "A man, a plan, a canal: Panama." Or with more fun with punctuation: "No! Sir! Away! A papaya war is on!" 
+For our purposes it's a phrase wherein the letters going from left to right are exactly the same as the letters going from right to left. For instance, famously, "A man, a plan, a canal: Panama." Or with more fun punctuation: "No! Sir! Away! A papaya war is on!" 
 
 Motivation:
 

@@ -4,7 +4,7 @@ For our purposes it's a phrase wherein the letters going from left to right are 
 
 Motivation:
 
-Writing palindromes is hard, particularly ones that make at least a little sense in English. My strategy has been to start with a word that has some word or word piece in its reverse, and start with that in the center.
+Writing palindromes is hard, particularly ones that make at least a little sense in English. My strategy has been to start with a word that has some word or word piece in its reverse, put that in the center and work from there.
 
 For example: *Cesspool* 's reverse is *loopssec* and that has the word *loops* in it.
 
@@ -14,7 +14,7 @@ loops sec*ret* cesspool
 
 This makes maybe a modicum of sense grammatically, but it's not a palindrome... for that we gotta add "ter" between secret and cesspool.
 
-So not we have:
+So now we have:
 
 loops secret *ter* cesspool.
 

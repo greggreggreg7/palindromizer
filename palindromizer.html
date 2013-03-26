@@ -182,9 +182,9 @@ function cursor_in_pal(cursor, spans) {
     return currentSpanIsPal;
 }
 
-// In: Cursor Position, list of Spans within the currently focused div;
-// Out: Boolean true if cursor is within span with class "palindrome", false if not
-// Side-effect: sets global CurrentSpan
+// In: spaces to move, direction optional
+// Out: void
+// Side-effect: moves cursor in browser
 function move_cursor_by_spaces(spaces, direction) {
     direction = (typeof direction === "undefined") ? "forward" : direction;
     var i = 0;
@@ -219,11 +219,13 @@ var captureSelection = function (e) {
     if ($('#pal-left').text() || $('#pal-right').text()) {
         spans = $(selection.anchorNode.parentElement.parentElement).children();
         currentSpanIsPal = cursor_in_pal(cursor, spans, false);
-        currentSpanIsPal = $(currentSpan).hasClass('palindrome');
     }
     return cursor;
 };
 
+// "Mirror" button click handling
+// Toggles t/f of global mirrorSwitch
+// Returns browser focus to last focused div
 $('#mirror').click(function (e) {
     e.preventDefault();
     $(lastFocused).focus();
@@ -232,7 +234,8 @@ $('#mirror').click(function (e) {
     $(this).toggleClass("selected");
 });
 
-
+// Text justification button click handling
+// Returns browser focus to last focused div
 $('a.dir').click(function (e) {
     e.preventDefault();
     $(lastFocused).focus();
@@ -255,6 +258,10 @@ $('a.dir').click(function (e) {
     }
 });
 
+// Handles keydown event.
+// Sets global spaceAdd which patches cursor bug when spaces inserted
+// Parses keystroke to set global action
+// Sets global goPal to true for all "length changing" keys
 $('div.pal').keydown(function (e) {
     captureSelection();
     if (action === "space") {
@@ -283,6 +290,8 @@ $('div.pal').keydown(function (e) {
         goPal = false;
     }
 });
+
+// Extracts character pressed by user; sets global newChar
 $('div.pal').keypress(function (e) {
     newChar = just_letters(String.fromCharCode(e.keyCode));
 });
@@ -304,6 +313,19 @@ function set_triggers(element) {
     bsLetter = thisText.charAt(cursor - 1);
 }
 
+// mirror() is called when palindrome divs signal new input
+// if mirrorSwitch is true, determine by action what to do on other side:
+//     action = letter : find where to mirror the new letter
+//       ''   = delete or backspace : find where to delete letter
+//       ''   = punct or space: do nothing on other side
+//    Then send new text to be analyzed for palindromes which sends back html
+//    Insert processed html back into input fields
+//    Reset cursor
+// if mirrorSwitch false,
+//    Send new text to be analyzed for palindromes which sends back html
+//    Then send new text to be analyzed for palindromes which sends back html
+//    Insert processed html back into input fields
+//    Reset cursor
 function mirror() {
     // The meat of the app.
     // goPal is true if the 

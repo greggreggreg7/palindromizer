@@ -10,7 +10,7 @@ For example: *Cesspool* 's reverse is *loopssec* and that has the word *loops* i
 
 So now we have "loops sec cesspool". Well, these are all words (sec is kind of a stretch, but it could be short for second, or it could be the Security Exchange Commission... work with me here.), that doesn't make sense. Let's make "sec" into "secret":
 
-loops sec *ret* cesspool
+loops sec*ret* cesspool
 
 This makes maybe a modicum of sense grammatically, but it's not a palindrome... for that we gotta add "ter" between secret and cesspool.
 
@@ -20,7 +20,7 @@ loops secret *ter* cesspool.
 
 Uhoh... "ter" is not a word. But "center" is!
 
-loops secret *cen* ter cesspool.
+loops secret *cen*ter cesspool.
 
 Great but its not a palindrome anymore until we add:
 
@@ -28,7 +28,7 @@ loops secret *nec* center cesspool.
 
 Let's make it:
 
-loops secret nec *tar* center cesspool.
+loops secret nec*tar* center cesspool.
 
 Once again non-palindromic, but we can add:
 

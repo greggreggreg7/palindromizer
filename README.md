@@ -4,11 +4,11 @@ For our purposes it's a phrase wherein the letters going from left to right are 
 
 Motivation:
 
-Writing palindromes is hard, particularly ones that make a least a little sense in English. My strategy has been to start with a word that has some word or word piece in its reverse, and start with that in the center.
+Writing palindromes is hard, particularly ones that make at least a little sense in English. My strategy has been to start with a word that has some word or word piece in its reverse, and start with that in the center.
 
 For example: *Cesspool* 's reverse is *loopssec* and that has the word *loops* in it.
 
-So now we have "loops sec cesspool". Well, these are all words (sec is kind of a stretch, but it could be short for second, or it could be the Security Exchange Commission... work with me here.), that doesn't make sense. Let's make "sec" into "secret":
+So now we have "loops sec cesspool". Well, these are all words (sec is kind of a stretch, but it could be short for second, or it could be the Security Exchange Commission... work with me here.), but they don't make sense. Let's make "sec" into "secret":
 
 loops sec*ret* cesspool
 

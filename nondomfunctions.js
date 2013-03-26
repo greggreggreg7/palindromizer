@@ -1,16 +1,16 @@
 /* (N)PTM(E): (Non-)Palindrome Terminal Mark (End) */
-PTM = "{"
-PTME = "}"
-NPTM = "["
-NPTME = "]"
+var PTM = "{";
+var PTME = "}";
+var NPTM = "[";
+var NPTME = "]";
 var palCounter = 0
 function colorize(string, isPal, counter, type, offset) {
     var ana = (type === "front") ? "back" : "front";
     if (isPal) {
-        string = "<span id='pair-" + counter + "-" + type + "' class='palindrome p" + palCounter +"' offset='" + offset + "' side='" + type + "' pair='" + counter + "' analog='pair-" + counter + "-" + ana + "' >" + string + "</span>"
+        string = "<span id='pair-" + counter + "-" + type + "' class='palindrome p" + palCounter +"' offset='" + offset + "' side='" + type + "' pair='" + counter + "' analog='pair-" + counter + "-" + ana + "' >" + string + "</span>";
         // console.log(string)
     } else {
-        string = "<span id='pair-" + counter + "-" + type + "' class='non-palindrome' offset='" + offset + "' side='" + type + "' pair='" + counter + "' analog='pair-" + counter + "-" + ana + "' >" + string + "</span>"
+        string = "<span id='pair-" + counter + "-" + type + "' class='non-palindrome' offset='" + offset + "' side='" + type + "' pair='" + counter + "' analog='pair-" + counter + "-" + ana + "' >" + string + "</span>";
     }
     return string;
 }
@@ -20,7 +20,7 @@ function just_letters(string) {
     In:  string
     Out: same string but with only letters and all lowercase    
     */
-    return string.replace(/[^A-Za-z]/g, "").toLowerCase()
+    return string.replace(/[^A-Za-z]/g, "").toLowerCase();
 }
 
 function map_string_to_scrubbed_string(string, scrubbedString) {    
@@ -50,16 +50,16 @@ function map_string_to_scrubbed_string(string, scrubbedString) {
     // console.log(finalPos)
     for (var i = 0; i <= finalPos; i++) 
     {
-        if (i < finalPos)
+        if (i < finalPos);
         {
-            placeInString = string.toLowerCase().indexOf(scrubbedString[i], lastPlaceInString) + 1
+            placeInString = string.toLowerCase().indexOf(scrubbedString[i], lastPlaceInString) + 1;
         } else {
-            placeInString =  string.length
+            placeInString =  string.length;
         }
-        mapped.push(string.substring(lastPlaceInString,placeInString))
-        lastPlaceInString = placeInString
+        mapped.push(string.substring(lastPlaceInString,placeInString));
+        lastPlaceInString = placeInString;
     }
-    return mapped
+    return mapped;
 }
 
 function map_to_string(map) {
@@ -87,12 +87,12 @@ function palindromize(left, right, listReturn, oldString) {
     var mappedStringR = map_string_to_scrubbed_string(right, scrubbedStringR);
     var palArray = [[scrubbedStringL, scrubbedStringR]];
 
-    var frontTextLength = 0
-    var backTextLength = right.length
-    var frontString = ""
-    var backString = ""
-    var frontPos = 0
-    var backPos = mappedStringR.length
+    var frontTextLength = 0;
+    var backTextLength = right.length;
+    var frontString = "";
+    var backString = "";
+    var frontPos = 0;
+    var backPos = mappedStringR.length;
 
     go = true;
     while (go)
@@ -111,7 +111,7 @@ function palindromize(left, right, listReturn, oldString) {
         {
             // # two-length lists are populated with analog pieces of the original string.
             // # these need to be processed by find_longest_pal_in_pieces
-            if (!is_terminal(arrayCopy[i][0]) && !is_terminal(arrayCopy[i][1]))
+            if (!is_terminal(arrayCopy[i][0]) && !is_terminal(arrayCopy[i][1]));
             {
                 // # replace the piece in question in the original array
                 // # with results of find_longest...
@@ -132,8 +132,8 @@ function palindromize(left, right, listReturn, oldString) {
 
     if (listReturn) {return palArray;}
 
-    var isPal
-    palCounter = 0
+    var isPal;
+    palCounter = 0;
     for (var i = 0; i < palArray.length; i++)
     {
         if (palArray[i].length === 2 && (palArray[i][0].length > 2 || palArray[i][1].length > 2))
@@ -141,11 +141,11 @@ function palindromize(left, right, listReturn, oldString) {
             var frontScrubbedStringLength = palArray[i][0].length - 2;
 
             if (palArray[i][0].slice(0,1) === "{") {
-                isPal = true
-                palCounter++
+                isPal = true;
+                palCounter++;
                 if (palCounter > 5) {palCounter = 1;}
             } else {
-                isPal = false
+                isPal = false;
             }
                 // console.log(map_to_string(mappedStringL.slice(frontPos, frontPos + frontScrubbedStringLength)))
 
@@ -180,9 +180,9 @@ function is_terminal(string, strict) {
     if (typeof string === "undefined") {return false}
     if (string.slice(0,1) === PTM || string.slice(0,1) === NPTM) 
     {
-        return true
+        return true;
     } else {
-        return false
+        return false;
     }
 }
 
@@ -195,14 +195,14 @@ function find_longest_pal_in_pieces(left, right)
 {
     if (typeof right === "undefined")
     {
-        var single = true
-        right = left.slice(left.length/2)
-        left = left.slice(0, left.length/2)
+        var single = true;
+        right = left.slice(left.length/2);
+        left = left.slice(0, left.length/2);
     }
 
     if (!left.length || !right.length)
     {
-        return single ? [[NPTM + left + right + NPTME]] : [[NPTM + left + NPTME, NPTM + right + NPTME]]
+        return single ? [[NPTM + left + right + NPTME]] : [[NPTM + left + NPTME, NPTM + right + NPTME]];
     }
     /*
     In: Analog "mirror" pieces of the original string given to palindromize, left and right
@@ -221,11 +221,11 @@ function find_longest_pal_in_pieces(left, right)
             ]
     */
 
-    var scrubbedLeft = just_letters(left)
-    var scrubbedRight = just_letters(right) 
+    var scrubbedLeft = just_letters(left);
+    var scrubbedRight = just_letters(right);
 
-    var mappedLeft = map_string_to_scrubbed_string(left, scrubbedLeft)
-    var mappedRight = map_string_to_scrubbed_string(right, scrubbedRight)
+    var mappedLeft = map_string_to_scrubbed_string(left, scrubbedLeft);
+    var mappedRight = map_string_to_scrubbed_string(right, scrubbedRight);
     /*
     # boolDict OF WONDER:
     # the precise way to inspect the two sides for the largest palindrome
@@ -238,50 +238,50 @@ function find_longest_pal_in_pieces(left, right)
     # which ever side is indeed larger.
     */
 
-    var boolDict = [[scrubbedLeft, mappedLeft], [scrubbedRight, mappedRight]]
+    var boolDict = [[scrubbedLeft, mappedLeft], [scrubbedRight, mappedRight]];
 
-    var rightIsLarger = scrubbedLeft.length > scrubbedRight.length ? false : true
+    var rightIsLarger = scrubbedLeft.length > scrubbedRight.length ? false : true;
 
-    var largerScrubbed = boolDict[Number(rightIsLarger)][0]
-    var smallerScrubbed = boolDict[Number(!rightIsLarger)][0]
+    var largerScrubbed = boolDict[Number(rightIsLarger)][0];
+    var smallerScrubbed = boolDict[Number(!rightIsLarger)][0];
 
-    counter = 1
+    counter = 1;
     for (var i = largerScrubbed.length; i > 0; i--) {
         for (var o = 0; o < counter; o++) {
 
             // # startHalf being the substring being checked for its reverse
-            var startHalf = largerScrubbed.slice(o,i+o)
-            reverseHalf = reverse(startHalf)
+            var startHalf = largerScrubbed.slice(o,i+o);
+            reverseHalf = reverse(startHalf);
 
             // # make that search in the analog (smaller piece)
-            var reversePos = smallerScrubbed.indexOf(reverseHalf)
+            var reversePos = smallerScrubbed.indexOf(reverseHalf);
 
             if (reversePos !== -1)
             {
 
                 // # Move index positions from scrubbed to map
-                var largerMapped = boolDict[Number(rightIsLarger)][1]
-                var smallerMapped = boolDict[Number(!rightIsLarger)][1]
+                var largerMapped = boolDict[Number(rightIsLarger)][1];
+                var smallerMapped = boolDict[Number(!rightIsLarger)][1];
 
-                var startHalf = map_to_string(largerMapped.slice(o,i+o))
-                var reverseHalf = map_to_string(smallerMapped.slice(reversePos,reversePos + i))
-                var aString = map_to_string(largerMapped.slice(0,o))
-                var bString = map_to_string(largerMapped.slice(i+o))
-                var aStringAna = map_to_string(smallerMapped.slice(reversePos + i))
-                var bStringAna = map_to_string(smallerMapped.slice(0,reversePos))
+                var startHalf = map_to_string(largerMapped.slice(o,i+o));
+                var reverseHalf = map_to_string(smallerMapped.slice(reversePos,reversePos + i));
+                var aString = map_to_string(largerMapped.slice(0,o));
+                var bString = map_to_string(largerMapped.slice(i+o));
+                var aStringAna = map_to_string(smallerMapped.slice(reversePos + i));
+                var bStringAna = map_to_string(smallerMapped.slice(0,reversePos));
 
                 // # return list always goes: [["outside" left, "outside" right,], [found Palindrome left, found Palindrome right], ["inside" left, "inside" right]] 
 
                 if (rightIsLarger)
                 {
-                    return (single) ? [[bStringAna, bString], [PTM + reverseHalf + PTME, PTM + startHalf + PTME], [aStringAna + aString]] : [[bStringAna, bString], [PTM + reverseHalf + PTME, PTM + startHalf + PTME], [aStringAna, aString]]
+                    return (single) ? [[bStringAna, bString], [PTM + reverseHalf + PTME, PTM + startHalf + PTME], [aStringAna + aString]] : [[bStringAna, bString], [PTM + reverseHalf + PTME, PTM + startHalf + PTME], [aStringAna, aString]];
                 } else {
-                    return [[aString, aStringAna], [PTM + startHalf + PTME, PTM + reverseHalf + PTME], [bString, bStringAna]]
+                    return [[aString, aStringAna], [PTM + startHalf + PTME, PTM + reverseHalf + PTME], [bString, bStringAna]];
                 }
             }
         };
         counter++        
     };
     /* if you got down here, there's no palindrome in the pieces. Mark them as terminal. */
-    return single ? [[NPTM + left + right + NPTME]] : [[NPTM + left + NPTME, NPTM + right + NPTME]]
+    return single ? [[NPTM + left + right + NPTME]] : [[NPTM + left + NPTME, NPTM + right + NPTME]];
 }

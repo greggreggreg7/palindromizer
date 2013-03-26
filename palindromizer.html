@@ -6,7 +6,6 @@
     body {
         background-color: #cccccc;
         padding: 0 0 ;
-
     }
     #header {
         width: 750px;
@@ -119,7 +118,7 @@
 </head>
 <body>
     <div id="header">
-        <h1>palind<span class="mirrorChar">r</span><span class="mirrorChar">o</span><span class="mirrorChar">m</span><span class="mirrorChar">i</span><span class="mirrorChar">z</span><span class="mirrorChar">e</span><span class="mirrorChar">r</span></h1>
+        <h1>palind<span class="mirrorChar">rezimor</span></h1>
         <h3>a palindrome editor</h3>
     </div>
     <div id="outerbox">
@@ -142,35 +141,90 @@
 
  
 <script type="text/javascript">
-var LETTERS = ["a","A","b","B","c","C","d","D","e","E","f","F","g","G","h","H","i","I","j","J","k","K","l","L","m","M","n","N","o","O","p","P","q","Q","r","R","s","S","t","T","u","U","v","V","w","W","x","X","y","Y","z","Z"]
-var goPal, 
-    newChar, 
-    action, 
-    delTrigger, 
-    bsTrigger, 
-    delLetter, 
-    bsLetter, 
-    cursor, 
+var LETTERS = ["a", "A", "b", "B", "c", "C", "d", "D", "e", "E", "f", "F", "g", "G", "h", "H", "i", "I", "j", "J", "k", "K", "l", "L", "m", "M", "n", "N", "o", "O", "p", "P", "q", " Q", "r", "R", "s", "S", "t", "T", "u", "U", "v", " V", "w", "W", "x", "X", "y", "Y", "z", "Z"];
+var goPal,
+    newChar,
+    action,
+    delTrigger,
+    bsTrigger,
+    delLetter,
+    bsLetter,
+    cursor,
     lastFocused,
     spaceAdd,
     selection,
     currentSpan,
-    range;
+    range,
+    offset;
 var invert = true;
 var mirrorSwitch = true;
 var currentSpanIsPal = true;
 
+// In: Cursor Position, list of Spans within the currently focused div;
+// Out: Boolean true if cursor is within span with class "palindrome", false if not
+// Side-effect: sets global CurrentSpan
+function cursor_in_pal(cursor, spans) {
+    var checkSpan,
+        currentStart,
+        currentEnd,
+        currentSpanIsPal,
+        i;
+    for (i = 0; i < spans.length; i++) {
+        checkSpan = spans[i];
+        currentStart = Number($(checkSpan).attr('offset'));
+        currentEnd = currentStart + $(spans[i]).text().length;
+        currentSpanIsPal = $(checkSpan).hasClass('palindrome');
+        if (cursor === 0 || (currentStart < cursor && cursor <= currentEnd)) {
+            break;
+        }
+    }
+    currentSpan = checkSpan;
+    return currentSpanIsPal;
+}
+
+// In: Cursor Position, list of Spans within the currently focused div;
+// Out: Boolean true if cursor is within span with class "palindrome", false if not
+// Side-effect: sets global CurrentSpan
 function move_cursor_by_spaces(spaces, direction) {
     direction = (typeof direction === "undefined") ? "forward" : direction;
     var i = 0;
-    while (i < spaces)
-    {
+    while (i < spaces) {
         selection.modify("move", direction, "character");
         i++;
     }
 }
 
-$('#mirror').click(function(e) {
+// Populates selection, cursor, range, currentSpan global variables; also destroys "uncollapsed" selections.
+var captureSelection = function (e) {
+    var spans,
+        spanOffset;
+    selection = window.getSelection();
+
+    // Destroy "uncollapsed" selections;
+    range = selection.getRangeAt(0);
+    if (!range.collapsed) {
+        move_cursor_by_spaces(1);
+    }
+
+    spanOffset = Number($(range.endContainer.parentElement).attr('offset'));
+    if (spanOffset >= 0) {
+        cursor = (range.startOffset + Number($(range.endContainer.parentElement).attr('offset')));
+    } else {
+        cursor = 0;
+    }
+    offset = range.startOffset;
+
+    currentSpan = undefined;
+
+    if ($('#pal-left').text() || $('#pal-right').text()) {
+        spans = $(selection.anchorNode.parentElement.parentElement).children();
+        currentSpanIsPal = cursor_in_pal(cursor, spans, false);
+        currentSpanIsPal = $(currentSpan).hasClass('palindrome');
+    }
+    return cursor;
+};
+
+$('#mirror').click(function (e) {
     e.preventDefault();
     $(lastFocused).focus();
     mirrorSwitch = !mirrorSwitch;
@@ -179,28 +233,29 @@ $('#mirror').click(function(e) {
 });
 
 
-$('a.dir').click(function(e) {
+$('a.dir').click(function (e) {
     e.preventDefault();
     $(lastFocused).focus();
-    if ($(this).hasClass("selected")) {
-    } else if (this.id === "in") {
-        $("#pal-left").css("text-align", "left");
-        $("#pal-right").css("text-align", "right");
-        $(this).toggleClass("unselected");
-        $(this).toggleClass("selected");
-        $("#out").toggleClass("unselected");
-        $("#out").toggleClass("selected");
-    } else {
-        $("#pal-left").css("text-align", "right");
-        $("#pal-right").css("text-align", "left");
-        $(this).toggleClass("unselected");
-        $(this).toggleClass("selected");
-        $("#in").toggleClass("unselected");
-        $("#in").toggleClass("selected");
+    if (!$(this).hasClass("selected")) {
+        if (this.id === "in") {
+            $("#pal-left").css("text-align", "left");
+            $("#pal-right").css("text-align", "right");
+            $(this).toggleClass("unselected");
+            $(this).toggleClass("selected");
+            $("#out").toggleClass("unselected");
+            $("#out").toggleClass("selected");
+        } else {
+            $("#pal-left").css("text-align", "right");
+            $("#pal-right").css("text-align", "left");
+            $(this).toggleClass("unselected");
+            $(this).toggleClass("selected");
+            $("#in").toggleClass("unselected");
+            $("#in").toggleClass("selected");
+        }
     }
 });
 
-$('div.pal').keydown(function(e) {
+$('div.pal').keydown(function (e) {
     captureSelection();
     if (action === "space") {
         spaceAdd++;
@@ -208,7 +263,7 @@ $('div.pal').keydown(function(e) {
         spaceAdd = 0;
     }
     goPal = true;
-    if (e.keyCode > 64 && e.keyCode <98) {
+    if (e.keyCode > 64 && e.keyCode < 98) {
         // alphabetic
         action = "letter";
     } else if (e.keyCode === 8) {
@@ -228,17 +283,16 @@ $('div.pal').keydown(function(e) {
         goPal = false;
     }
 });
-
-$('div.pal').keypress(function(e) {
+$('div.pal').keypress(function (e) {
     newChar = just_letters(String.fromCharCode(e.keyCode));
 });
 $('div.pal').bind("input", mirror);
 
-$('div.pal').mouseup(function() {captureSelection();});
-$('div.pal').click(function() {captureSelection();});
+$('div.pal').mouseup(function () { captureSelection(); });
+$('div.pal').click(function () { captureSelection(); });
 
-$('div.pal').focus(function() {
-        lastFocused = this;
+$('div.pal').focus(function () {
+    lastFocused = this;
 });
 
 function set_triggers(element) {
@@ -246,60 +300,68 @@ function set_triggers(element) {
     var thisText = $(element).text();
     delTrigger = LETTERS.indexOf(thisText.charAt(cursor)) !== -1;
     delLetter = thisText.charAt(cursor);
-    bsTrigger = LETTERS.indexOf(thisText.charAt(cursor -1)) !== -1;
-    bsLetter = thisText.charAt(cursor-1) ;
+    bsTrigger = LETTERS.indexOf(thisText.charAt(cursor - 1)) !== -1;
+    bsLetter = thisText.charAt(cursor - 1);
 }
 
 function mirror() {
     // The meat of the app.
     // goPal is true if the 
-    var plus, toPal;
-
+    var plus,
+        toPal,
+        flip,
+        that,
+        thisPairText,
+        thatPair,
+        mappedThatPairText,
+        numNonLetters,
+        pairIndex,
+        checkLetter,
+        delCell,
+        delIndex,
+        palArray;
     if (mirrorSwitch) {
-        
         // Determine which side we're on, that will be the side being mirrored onto.
         if (this.id === "pal-left") {
-            var that = $('#pal-right');
-            var flip = false;
+            that = $('#pal-right');
+            flip = false;
         } else {
-            var that = $('#pal-left');                
-            var flip = true;            
+            that = $('#pal-left');
+            flip = true;
         }
 
-
-        var thisPairText = $(currentSpan).text();
-        var thatPair = $("#"+ $(currentSpan).attr("analog"));
-        var mappedThatPairText = map_string_to_scrubbed_string($(thatPair).text(), just_letters($(thatPair).text()));
-        var numNonLetters = thisPairText.slice(0,offset).length - just_letters(thisPairText.slice(0,offset)).length;
-        var pairIndex = (action === "del") ? mappedThatPairText.length - offset + numNonLetters - 1 : mappedThatPairText.length - offset + numNonLetters;
-        var checkLetter = (action === "del") ? delLetter : bsLetter;
-
+        thisPairText = $(currentSpan).text();
+        thatPair = $("#" + $(currentSpan).attr("analog"));
+        mappedThatPairText = map_string_to_scrubbed_string($(thatPair).text(), just_letters($(thatPair).text()));
+        numNonLetters = thisPairText.slice(0, offset).length - just_letters(thisPairText.slice(0, offset)).length;
+        pairIndex = (action === "del") ? mappedThatPairText.length - offset + numNonLetters - 1 : mappedThatPairText.length - offset + numNonLetters;
+        checkLetter = (action === "del") ? delLetter : bsLetter;
 
         if ((action === "del" && delTrigger) || (action === "bs" && bsTrigger)) {
             plus = (action === "del" && delTrigger) ? 0 : -1;
             if (!currentSpanIsPal) {
                 toPal = [$(this).text(), $(that).text()];
             } else if ($(that).text()) {
-                var delCell = mappedThatPairText[pairIndex];
-                var delIndex = delCell.toLowerCase().indexOf(checkLetter.toLowerCase())
+                delCell = mappedThatPairText[pairIndex];
+                delIndex  = delCell.toLowerCase().indexOf(checkLetter.toLowerCase());
                 mappedThatPairText[pairIndex] = delCell.slice(0, delIndex) + delCell.slice(delIndex + 1);
-                $(thatPair).text(map_to_string(mappedThatPairText))
-                toPal = false;            
+                $(thatPair).text(map_to_string(mappedThatPairText));
+                toPal = false;
             }
         } else if (action === "letter") {
             if ($(that).text()) {
-                mappedThatPairText.splice(pairIndex, 0, newChar)
-                $(thatPair).text(map_to_string(mappedThatPairText))
+                mappedThatPairText.splice(pairIndex, 0, newChar);
+                $(thatPair).text(map_to_string(mappedThatPairText));
                 toPal = (currentSpanIsPal) ? false : [$(this).text(), $(that).text()];
                 plus = 1;
             } else {
                 toPal = [$(this).text(), newChar];
-                plus = 1; 
+                plus = 1;
             }
-        } 
+        }
     } else {
-        toPal = [$('#pal-left').text(), $('#pal-right').text()]
-        var flip = false;
+        toPal = [$('#pal-left').text(), $('#pal-right').text()];
+        flip = false;
         if (action === "letter" || action === "punct" || action === "space") {
             plus = 1;
         } else if (action === "del") {
@@ -310,74 +372,15 @@ function mirror() {
             toPal = false;
         }
     }
-    
     if (toPal) {
-
-        if (flip) {toPal.reverse();}
-
-        var palArray = palindromize(toPal[0],toPal[1]);
-
+        if (flip) { toPal.reverse(); }
+        palArray = palindromize(toPal[0], toPal[1]);
         $('#pal-left').html(palArray[0]);
         $('#pal-right').html(palArray[1]);
-
         selection.modify("move", "backward", "line");
         move_cursor_by_spaces(cursor + plus);
     }
-
-    $("#pal_complete").text($('#pal-left').text() + $('#pal-right').text() )
-}
-
-// Populates selection, cursor, range, currentSpan variables
-var captureSelection = function(e) {
-    var nextSpan, 
-        nextSpanIsPal, 
-        prevSpan, 
-        prevSpanIsPal, 
-        behind, 
-        ahead;
-    selection = window.getSelection();
-
-    range = selection.getRangeAt(0);
-    if (!range.collapsed) {
-        move_cursor_by_spaces(1);
-    }
-    var spanOffset = Number($(range.endContainer.parentElement).attr('offset'))
-    if (spanOffset >= 0) {
-        cursor = (range.startOffset + Number($(range.endContainer.parentElement).attr('offset')))
-    } else {
-        cursor = 0
-    }
-    offset = range.startOffset
-
-    currentSpan = undefined;
-
-    if ($('#pal-left').text() || $('#pal-right').text() ) {
-        spans = $(selection.anchorNode.parentElement.parentElement).children();
-        currentSpanIsPal = cursor_in_pal(cursor, spans, false)
-        currentSpanText = $(currentSpan).text()
-        jlCurrentSpanText = just_letters(currentSpanText)
-        mappedCurrentSpanText = map_string_to_scrubbed_string(currentSpanText, jlCurrentSpanText)
-        currentSpanIsPal = $(currentSpan).hasClass('palindrome');
-    }
-
-
-    return cursor
-};
-
-function cursor_in_pal(cursor, spans) {
-    var checkSpan, currentStart, currentEnd, currentSpanIsPal;
-    for (var i=0; i<spans.length; i++) {
-        checkSpan = spans[i];
-        currentStart = Number($(checkSpan).attr('offset'));
-        currentEnd = currentStart + $(spans[i]).text().length;
-        currentSpanIsPal = $(checkSpan).hasClass('palindrome');
-
-        if (cursor === 0 || (currentStart < cursor && cursor <= currentEnd)) {
-            break;
-        } 
-    }
-    currentSpan = checkSpan;
-    return currentSpanIsPal;
+    $("#pal_complete").text($('#pal-left').text() + $('#pal-right').text());
 }
 </script>
 </body>

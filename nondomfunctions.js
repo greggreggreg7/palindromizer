@@ -48,14 +48,15 @@ function map_string_to_scrubbed_string(string, scrubbedString) {
     var lastPlaceInString = 0;
     var mapped = [];
     var finalPos = scrubbedString.length - 1;
+    var lowercase = string.toLowerCase();
     // console.log(finalPos)
     for (var i = 0; i <= finalPos; i++) {
         if (i < finalPos) {
-            placeInString = string.toLowerCase().indexOf(scrubbedString[i], lastPlaceInString) + 1;
+            placeInString = lowercase.indexOf(scrubbedString[i], lastPlaceInString) + 1;
         } else {
-            placeInString =  string.length;
+            placeInString = string.length;
         }
-        mapped.push(string.substring(lastPlaceInString,placeInString));
+        mapped.push(string.substring(lastPlaceInString, placeInString));
         lastPlaceInString = placeInString;
     }
     return mapped;

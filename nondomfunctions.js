@@ -6,13 +6,14 @@ var NPTME = "]";
 var palCounter = 0
 function colorize(string, isPal, counter, type, offset) {
     var ana = (type === "front") ? "back" : "front";
+    var result = "<span id='pair-" + counter + "-" + type + "' ";
     if (isPal) {
-        string = "<span id='pair-" + counter + "-" + type + "' class='palindrome p" + palCounter +"' offset='" + offset + "' side='" + type + "' pair='" + counter + "' analog='pair-" + counter + "-" + ana + "' >" + string + "</span>";
-        // console.log(string)
+        result += "class='palindrome p" + palCounter + "'";
     } else {
-        string = "<span id='pair-" + counter + "-" + type + "' class='non-palindrome' offset='" + offset + "' side='" + type + "' pair='" + counter + "' analog='pair-" + counter + "-" + ana + "' >" + string + "</span>";
+        result += "class='non-palindrome'";
     }
-    return string;
+    result += " offset='" + offset + "' side='" + type + "' pair='" + counter + "' analog='pair-" + counter + "-" + ana + "' >" + string + "</span>";
+    return result;
 }
 
 function just_letters(string) {

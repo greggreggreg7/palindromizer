@@ -6,13 +6,14 @@ var NPTME = "]";
 var palCounter = 0
 function colorize(string, isPal, counter, type, offset) {
     var ana = (type === "front") ? "back" : "front";
+    var result = "<span id='pair-" + counter + "-" + type + "' ";
     if (isPal) {
-        string = "<span id='pair-" + counter + "-" + type + "' class='palindrome p" + palCounter +"' offset='" + offset + "' side='" + type + "' pair='" + counter + "' analog='pair-" + counter + "-" + ana + "' >" + string + "</span>";
-        // console.log(string)
+        result += "class='palindrome p" + palCounter + "'";
     } else {
-        string = "<span id='pair-" + counter + "-" + type + "' class='non-palindrome' offset='" + offset + "' side='" + type + "' pair='" + counter + "' analog='pair-" + counter + "-" + ana + "' >" + string + "</span>";
+        result += "class='non-palindrome'";
     }
-    return string;
+    result += " offset='" + offset + "' side='" + type + "' pair='" + counter + "' analog='pair-" + counter + "-" + ana + "' >" + string + "</span>";
+    return result;
 }
 
 function just_letters(string) {
@@ -47,14 +48,15 @@ function map_string_to_scrubbed_string(string, scrubbedString) {
     var lastPlaceInString = 0;
     var mapped = [];
     var finalPos = scrubbedString.length - 1;
+    var lowercase = string.toLowerCase();
     // console.log(finalPos)
     for (var i = 0; i <= finalPos; i++) {
         if (i < finalPos) {
-            placeInString = string.toLowerCase().indexOf(scrubbedString[i], lastPlaceInString) + 1;
+            placeInString = lowercase.indexOf(scrubbedString[i], lastPlaceInString) + 1;
         } else {
-            placeInString =  string.length;
+            placeInString = string.length;
         }
-        mapped.push(string.substring(lastPlaceInString,placeInString));
+        mapped.push(string.substring(lastPlaceInString, placeInString));
         lastPlaceInString = placeInString;
     }
     return mapped;
@@ -162,19 +164,13 @@ function palindromize(left, right, listReturn, oldString) {
 }
 
 
-function is_terminal(string, strict) {
+function is_terminal(string) {
     /*
-    In:  A string
-    Out: Normal Mode: True if string starts with a terminal mark or is empty; False otherwise
-         Strict Mode: True if string starts with a terminal mark; False otherwise
+    In:  An optional string
+    Out: True if string starts with a terminal mark or is empty; False otherwise
     */
-
     if (typeof string === "undefined") {return false}
-    if (string.slice(0,1) === PTM || string.slice(0,1) === NPTM) {
-        return true;
-    } else {
-        return false;
-    }
+    return string.slice(0, 1) === PTM || string.slice(0, 1) === NPTM;
 }
 
 function reverse(s) {

@@ -164,19 +164,13 @@ function palindromize(left, right, listReturn, oldString) {
 }
 
 
-function is_terminal(string, strict) {
+function is_terminal(string) {
     /*
-    In:  A string
-    Out: Normal Mode: True if string starts with a terminal mark or is empty; False otherwise
-         Strict Mode: True if string starts with a terminal mark; False otherwise
+    In:  An optional string
+    Out: True if string starts with a terminal mark or is empty; False otherwise
     */
-
     if (typeof string === "undefined") {return false}
-    if (string.slice(0,1) === PTM || string.slice(0,1) === NPTM) {
-        return true;
-    } else {
-        return false;
-    }
+    return string.slice(0, 1) === PTM || string.slice(0, 1) === NPTM;
 }
 
 function reverse(s) {

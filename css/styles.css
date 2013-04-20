@@ -119,9 +119,15 @@ p.suggestion {
 #links {
     text-align: center;
 }
-#links a {
+#links span {
+    padding: 0 3em;
+    line-height: 1.4em;
+}
+#links {
     font-family: Inconsolata;
-    padding: 3em;
+}
+#links a {
+
 }
 #links a:link {
     color: black;

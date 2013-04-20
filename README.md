@@ -1,3 +1,21 @@
+Overview
+========
+
+Palindromizer is a web app built to make the arduous task of writing Palindromes easier. Works in Chrome only at the moment.
+
+How it works
+------------
+Simply begin typing into either the left or right hand side of the text. Mirror-mode is on by default and any letters you type into one box will be generated, in reverse, in the opposite textbox. Palindromizer will attempt to parse this reverse text into words, using code borrowed from here: https://github.com/darius/js-playground
+
+To edit your Palindrome in a more freestyle mode, click the "Mirror" button to de-activate Mirror-mode. Now text will not be auto-generated into the opposite text-box. Now, Palindromizer's palindrome detection functions will come into play. Any text inputted into one box which does not have a reverse analog in the other box will be tagged red, and different palindromic chunks of text will be tagged in different non-red colors.
+
+TO-DO LIST
+==========
+
+* At the moment, special handling must be done to achieve a palindrome with an odd number of letters. Fix that.
+* Add functionality for saving and retrieving palindromes.
+* Word-suggestion
+
 Background info
 ===============
 
